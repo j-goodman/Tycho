@@ -3,18 +3,28 @@ var tycho = require('./tycho.js');
 window.onload = function () {
   var canvas = document.getElementById("canvas");
 
-  var earth = new tycho.Mass(60, 0.000055, 30, 30, 30, 10, 10, 0);
-  var moon = new tycho.Mass(24, 0.000055, 230, 230, 230, -10, -10, 0);
+  var G = 0.000000001;
+  var vPt = {x: 450, y: 450, z: 540};
+
+  var earth = new tycho.Mass(1, 60, 0.000055, 450, 200, -100, 0.5, -1, 1, "#4d4dff", "#000080", G);
+  var moon = new tycho.Mass(2, 30, 0.000055, 450, 300, -100, -4, 8, -8, "#e6e6e6", "#404040", G);
   var bodies = [];
   bodies.push(earth);
   bodies.push(moon);
 
   setInterval(function() {
 
-    earth.move(bodies);
-    moon.move(bodies);
-    earth.sphereDraw(canvas, "#0000ff");
-    moon.sphereDraw(canvas, "#ffffff");
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  }, 750);
+    bodies.sort(function(a, b) {
+      return b.pos.z - a.pos.z;
+    });
+
+    bodies.forEach(function(body) {
+      body.move(bodies);
+      body.sphereDraw(canvas, vPt);
+    });
+
+  }, 32);
 };
